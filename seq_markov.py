@@ -1,27 +1,46 @@
 import numpy as np
 from collections import Counter
 import bisect
+import seq_utils as su
 
 
-class markov_seq():
-    def __init__(self, order, train_data = None, transition_matrix = None):
-        """
-
+class markov_chain():
+    def __init__(self, order=0, start_state=None, transition_matrix=None):
+        """Generalized markov chain only knows a order, start state, and
+        transition matrix
         """
         self.order = order
+        self.start_state = start_state
+        self.transition_matrix = transition_matrix
+
+    def make_transition(self, tr_arr):
+        """Determine mutation based on transition probabilities"""
+
+        r = np.random.rand()
+        states = tr_arr.keys()
+        cum_probs = np.cumsum(tr_arr.values())
+        return states[bisect.bisect(cum_probs, r)]
+
+
+class markov_seq(markov_chain):
+    def __init__(self, order, train_data=None, transition_matrix=None):
+        """
+
+        """
+        markov_chain.__init__(self, order)
 
         if train_data is not None:
             self.coll = train_data.upper()
-            self.tr_dict = self.build_tr_matrix()
-        elif transition_matrix is not None:
+            self.transition_matrix = self.build_tr_matrix()
+        # elif transition_matrix is not None:
             # stuff to directly use a transition matrix
             # generate train_data using the transition matrix
         else:
-            raise("provide either training data or a transition matrix")
+            raise NameError("noInputData")
         
-        self.chain = self.start_state()
+        self.chain = self.gen_start_state()
 
-    def start_state(self):
+    def gen_start_state(self):
         if self.order == 0:
             n = 1
         else:
@@ -58,14 +77,6 @@ class markov_seq():
 
         return tr_dict
 
-    def transition(self, tr_arr):
-        """Determine mutation based on transition probabilities"""
-
-        r = np.random.rand()
-        states = tr_arr.keys()
-        cum_probs = np.cumsum(tr_arr.values())
-        return states[bisect.bisect(cum_probs, r)]
-
     def gen_next_state(self, nnext=None):
         if nnext is None:
             nnext = 1
@@ -77,8 +88,72 @@ class markov_seq():
             
         for _ in xrange(nnext):
             state = tuple(self.chain[-n:])
-            tr = self.transition(self.tr_dict[state])
+            tr = self.make_transition(self.transition_matrix[state])
             self.chain = self.chain + tr
 
     def get_chain(self):
         return self.chain
+
+    def __str__(self):
+        return self.get_chain()
+
+
+class markov_evolution(markov_chain):
+    def __init__(self, inseq, transition_matrix):
+        """
+
+        """
+        markov_chain.__init__(self, order=0, transition_matrix=transition_matrix)
+        self.inseq = list(inseq)
+
+    def filter_zero_prob(self, coll):
+        """Special case for filtering out the zero probability transitions
+        from the matrix"""
+    
+        idx = xrange(len(coll))
+        foo = zip(idx, coll)
+        new_coll = [[k, v] for k, v in foo if v != 0]
+        return dict(new_coll)
+
+    def list_to_dict(self, coll):
+        """takes a list and makes it a dictionary"""
+
+        arr = np.array(coll)
+        dimN = arr.shape[0]
+        new_dict = {}
+
+        for i in xrange(dimN):
+            new_dict.update({i: filter_zero_prob(coll[i])}) #dict(zip(range(dimM), coll[i]))})
+
+        return new_dict
+
+    # Takes a sequence and mutates it on at an average rate of lambda = mu
+    def mutate_seq(self, mu):
+        """Takes a mean number of mutations per sequence (mu), mutation model,
+        and a sequence, returns a new sequence that contains
+        mutations. the number of mutations per sequence is determined
+        by using a poisson distributed random number, typically on
+        average there are (10**-9 * seq_length) nucleotides mutated.
+
+        """
+        
+        mut_num = np.random.poisson(mu)
+        n = len(self.inseq)
+
+        # get the number of mutations to make and select the n positions
+        # to mutate
+        mut_pos = su.take(mut_num,
+                          su.distinct(
+                              su.repeatedly(np.random.randint, 0, n-1)))
+
+        # applies the mutations to the sequence at each mutation position
+        for i in mut_pos:
+            orig_nt = self.inseq[i]
+            new_nt = self.make_transition(self.transition_matrix[orig_nt])
+            self.inseq[i] = new_nt
+
+    def __str__(self):
+        return ''.join(self.inseq)
+
+    def as_str(self):
+        return self.__str__()

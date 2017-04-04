@@ -2,7 +2,8 @@ import random as rand
 import numpy as np
 from collections import Counter
 import bisect
-
+import seq_markov as sm
+import seq_object as sobj
 
 print(np.random.poisson(.2,10))
 
@@ -91,9 +92,9 @@ def main(nsamp, ngens, mutation_model, mean_mutations, inseq):
         #seq_arr.append(seq)
     return Counter(status_counter)
 
-#my_seq = 'ATG' + generate_seq(1000) + 'TGA'
+#my_seq = 'ATG' + sobj.generate_seq(1000) + 'TGA'
 
-# print mutate_seq(1, my_seq)
+#print mutate_seq(1, jc, my_seq)
 
 #print main(1000, 10000, jc, 10**-9*len(my_seq), my_seq)
 

@@ -1,1 +1,1 @@
-# seq-im
+# seq-sim
