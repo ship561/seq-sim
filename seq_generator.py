@@ -1,6 +1,7 @@
 from collections import Counter
 import seq_markov as mc
 import seq_object as sobj
+import sys
 
 
 def generate_seq(nlen, training='ACGT'):
@@ -40,4 +41,38 @@ x = 'ATG' + generate_seq(99) + 'TGA'
 print x
 print Counter(x)
 
-print main(10, 100, sobj.JC, 10**-5, x)
+print main(10, 1000, sobj.JC, 10**-5, x)
+
+
+# sys.argv[1]
+
+jc = [[0, 1.0/3, 1.0/3, 1.0/3],
+      [1.0/3, 0, 1.0/3, 1.0/3],
+      [1.0/3, 1.0/3, 0, 1.0/3],
+      [1.0/3, 1.0/3, 1.0/3, 0]]
+
+isinstance(jc, list)
+isinstance(np.array(jc), np.ndarray)
+isinstance({'a': 1}, dict)
+
+def filter_zero_prob(coll):
+    """Special case for filtering out the zero probability transitions
+    from the matrix"""
+    
+    idx = xrange(len(coll))
+    foo = zip(idx, coll)
+    new_coll = [[k, v] for k, v in foo if v != 0]
+    return dict(new_coll)
+
+def list_to_dict(coll):
+    """takes a list and makes it a dictionary"""
+    
+    arr = np.array(coll)
+    dimN = arr.shape[0]
+    new_dict = {}
+    
+    for i in xrange(dimN):
+        new_dict.update({i: self.filter_zero_prob(coll[i])})
+        
+    return new_dict
+

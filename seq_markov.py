@@ -6,8 +6,9 @@ import seq_utils as su
 
 class markov_chain():
     def __init__(self, order=0, start_state=None, transition_matrix=None):
-        """Generalized markov chain only knows a order, start state, and
-        transition matrix
+        """Generic Markov Chain object. This object is meant to be
+           generalizable to any sort of Markov process. It only needs
+           to know how to transition to the next state.
         """
         self.order = order
         self.start_state = start_state
@@ -21,12 +22,39 @@ class markov_chain():
         cum_probs = np.cumsum(tr_arr.values())
         return states[bisect.bisect(cum_probs, r)]
 
+    def filter_zero_prob(self, coll):
+        """Special case for filtering out the zero probability transitions
+           from the matrix"""
+
+        idx = xrange(len(coll))
+        foo = zip(idx, coll)
+        new_coll = [[k, v] for k, v in foo if v != 0]
+        return dict(new_coll)
+
+    def list_to_dict(self, coll):
+        """takes a list and makes it a dictionary"""
+
+        arr = np.array(coll)
+        dimN = arr.shape[0]
+        new_dict = {}
+
+        for i in xrange(dimN):
+            new_dict.update({i: self.filter_zero_prob(coll[i])})
+
+        return new_dict
 
 class markov_seq(markov_chain):
     def __init__(self, order, train_data=None, transition_matrix=None):
-        """
+        """Markov_seq is an object used to make a random sequence that mimics
+           the base composition of the training data. If no training
+           data is provided, it builds a sequence with uniform base
+           probabilities. This object treats the addition of each
+           nucleotide as a state transition; therefore, the Markov
+           chain becomes represents a randomly generated sequence
+           (MC.get_chain()).
 
         """
+        
         markov_chain.__init__(self, order)
 
         if train_data is not None:
@@ -100,32 +128,17 @@ class markov_seq(markov_chain):
 
 class markov_evolution(markov_chain):
     def __init__(self, inseq, transition_matrix):
+        """The markov_evolution object handles the sequence evolution
+           logic. It knows the starting sequence and can perform a
+           single generation evolution using the transition
+           matrix. The mutation method is defined by the mutate_seq()
+           function, which returns a new sequence to represent the
+           next generation.
         """
 
-        """
-        markov_chain.__init__(self, order=0, transition_matrix=transition_matrix)
+        markov_chain.__init__(self, order=0,
+                              transition_matrix=transition_matrix)
         self.inseq = list(inseq)
-
-    def filter_zero_prob(self, coll):
-        """Special case for filtering out the zero probability transitions
-        from the matrix"""
-    
-        idx = xrange(len(coll))
-        foo = zip(idx, coll)
-        new_coll = [[k, v] for k, v in foo if v != 0]
-        return dict(new_coll)
-
-    def list_to_dict(self, coll):
-        """takes a list and makes it a dictionary"""
-
-        arr = np.array(coll)
-        dimN = arr.shape[0]
-        new_dict = {}
-
-        for i in xrange(dimN):
-            new_dict.update({i: filter_zero_prob(coll[i])}) #dict(zip(range(dimM), coll[i]))})
-
-        return new_dict
 
     # Takes a sequence and mutates it on at an average rate of lambda = mu
     def mutate_seq(self, mu):

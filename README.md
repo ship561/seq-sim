@@ -1,6 +1,6 @@
-#Seq-sim
+# Seq-sim
 
-##Introduction
+## Introduction
 The aim of Seq-sim is to help further our understanding of the
 selective pressure to maintain a protein coding sequences. The central
 dogma of biology is that DNA -> RNA -> Protein. Therefore, given a
@@ -21,6 +21,6 @@ mutation, we assume that the base can mutate to any other base with
 equal probability. The output of the program is the number of
 funtional and non-functional sequences.
 
-##How to run the program
+## How to run the program
 Coming soon...
 
