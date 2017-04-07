@@ -43,6 +43,7 @@ class markov_chain():
 
         return new_dict
 
+
 class markov_seq(markov_chain):
     def __init__(self, order, train_data=None, transition_matrix=None):
         """Markov_seq is an object used to make a random sequence that mimics
