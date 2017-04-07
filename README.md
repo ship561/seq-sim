@@ -22,5 +22,9 @@ equal probability. The output of the program is the number of
 funtional and non-functional sequences.
 
 ## How to run the program
-Coming soon...
+python seq_generator.py
+
+or
+
+python seq_generator.py "ATGATCATACATGACAGGCTGCTTGGCGAATTCTACGTCAGTACACACCAAGGCTCTGCGCCCGCTGTCGAAAGCGCCTATCGCTAATGTCTGCTGTGGCGCATT"
 
