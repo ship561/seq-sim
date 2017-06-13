@@ -1,6 +1,5 @@
 import re
 import seq_markov as mc
-from collections import Counter
 
 
 UNIFORM_NT_PROBS = [0.25, 0.25, 0.25, 0.25]
@@ -71,7 +70,11 @@ class Sequence():
         return start_pos, stop_pos, max_delta
 
     def is_functional(self, orig_seq, mut_seq):
-        orig_start, orig_stop, orig_len = self.identify_ORF(orig_seq)
+        """Figures out if the ORF is still functional. Simply that
+        there are no premature stop codons.
+        """
+        orig_start, orig_stop,
+        orig_len = self.identify_ORF(orig_seq)
         mut_start, mut_stop, mut_len = self.identify_ORF(mut_seq)
         return orig_start == mut_start \
             and orig_stop == mut_stop \

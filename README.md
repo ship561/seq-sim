@@ -15,16 +15,29 @@ to maintain the coding sequence.
 
 Seq-sim simulates sequence evolution using a Markov process. The user
 needs to specify the mutation rate and the number of generation to
-simulate. The Markov process is At each generation, we use a Poisson
-random number to determine how many mutations to apply. For each
-mutation, we assume that the base can mutate to any other base with
-equal probability. The output of the program is the number of
-funtional and non-functional sequences.
+simulate. At each generation, we use a Poisson random number to
+determine how many mutations to apply. For each mutation, apply the
+Jukes-Cantor evolutionary model, which assumes that the base can
+mutate to any other base with equal probability. Other models such as
+HKY85 and GTR will be implemented in future versions.
+
+The final output of the program is the number of funtional and
+non-functional sequences. Functional in the current version is defined
+as a sequence without premature stop codons.
 
 ## How to run the program
-python seq_generator.py
+```bash
+python seq_generator.py -h
+```
 
 or
 
-python seq_generator.py "ATGATCATACATGACAGGCTGCTTGGCGAATTCTACGTCAGTACACACCAAGGCTCTGCGCCCGCTGTCGAAAGCGCCTATCGCTAATGTCTGCTGTGGCGCATT"
+```bash
+python seq_generator.py -i "ATGATCATACATGACAGGCTGCTTGGCGAATTCTACGTCAGTACACACCAAGGCTCTGCGCCCGCTGTCGAAAGCGCCTATCGCTAATGTCTGCTGTGGCGCATT"
+```
 
+`Counter({True: 93, False: 7})`
+
+## TODO
+- Add other evolutioary models (HKY85, GTR)
+- Simulate indels

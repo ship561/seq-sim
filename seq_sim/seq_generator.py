@@ -1,7 +1,8 @@
 from collections import Counter
 import seq_markov as mc
 import seq_object as sobj
-import sys
+import sys, getopt
+import argparse
 
 
 def generate_seq(nlen, training='ACGT'):
@@ -28,7 +29,7 @@ def simulate_n_generations(ngens, s):
     return s
 
 
-def main(nsamp, ngens, mutation_model, mutation_rate, inseq):
+def initialize_sim(nsamp, ngens, mutation_model, mutation_rate, inseq):
     status_counter = {True: 0, False: 0}
     for _ in xrange(nsamp):
         seq_obj = sobj.Sequence(inseq, mutation_rate, mutation_model)
@@ -39,6 +40,26 @@ def main(nsamp, ngens, mutation_model, mutation_rate, inseq):
     return Counter(status_counter)
 
 
+def main():
+    parser = argparse.ArgumentParser(description="Simulate sequence evolution")
+    parser.add_argument("-s", "--nsamp", type=int,  default=100,
+                        help="number of sequences to sample")
+    parser.add_argument("-g", "--ngens", type=int, default=1000,
+                        help="number of steps/generations")
+    parser.add_argument("-m", '--model', default=sobj.K80)
+    parser.add_argument("-u", "--rate", type=float, default=10**-5,
+                        help="mutation rate per step size (e.g 1e-4)")
+    parser.add_argument('-i', '--inseq', help="input sequence", required=True)
+    parser.add_argument('-v', '--verbose', action="store_true")
+    args = parser.parse_args()
+    out = initialize_sim(args.nsamp, args.ngens, args.model,
+                         args.rate, args.inseq)
+    if args.verbose:
+        print args
+    print out
+
+
+            
 #if len(sys.argv) == 1:
 #    x = 'ATG' + generate_seq(999) + 'TGA'
 #    print main(100, 1000, sobj.JC, 10**-1, x)
@@ -48,11 +69,13 @@ def main(nsamp, ngens, mutation_model, mutation_rate, inseq):
 x = "CATACATGACAGGCTGCTTGGCGAATTCTACGTCAGTACACACCAAGGCTCTGCGCCCGCTGTCGAAAGCGCCTATCGCTAATGTCTGCTGTGGCGCATT"
 x = 'ATG' + generate_seq(999) + 'TGA'
 print x
-print Counter(x)
+print Counter(x) # test case with known example. should be a test case in the future
 
-print main(100, 1000, sobj.K80, 10**-5, x)
+print initialize_sim(100, 1000, sobj.K80, 10**-5, x) # second test case
 
-
+if __name__ == '__main__':
+    print main()
+    
 # sys.argv[1]
 
 # jc = [[0, 1.0/3, 1.0/3, 1.0/3],
