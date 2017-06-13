@@ -37,7 +37,10 @@ python seq_generator.py -i "ATGATCATACATGACAGGCTGCTTGGCGAATTCTACGTCAGTACACACCAAG
 ```
 
 `Counter({True: 93, False: 7})`
+This result implies that a sequence of the given sequence simulated through 1000 generations, and repeated 100 times, will be functional (no premature stops) 93% of the time. This can be effectively thought of as answering the question, "given a starting sequence, repeat evolution 100x, how often will the gene remain functional?"
 
 ## TODO
 - Add other evolutioary models (HKY85, GTR)
 - Simulate indels
+- Write more test cases
+- Clean up main function in seq_generator and stop printing test cases

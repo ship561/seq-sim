@@ -73,8 +73,8 @@ class Sequence():
         """Figures out if the ORF is still functional. Simply that
         there are no premature stop codons.
         """
-        orig_start, orig_stop,
-        orig_len = self.identify_ORF(orig_seq)
+        
+        orig_start, orig_stop, orig_len = self.identify_ORF(orig_seq)
         mut_start, mut_stop, mut_len = self.identify_ORF(mut_seq)
         return orig_start == mut_start \
             and orig_stop == mut_stop \

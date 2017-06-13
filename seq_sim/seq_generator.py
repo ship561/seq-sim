@@ -48,7 +48,8 @@ def main():
                         help="number of steps/generations")
     parser.add_argument("-m", '--model', default=sobj.K80)
     parser.add_argument("-u", "--rate", type=float, default=10**-5,
-                        help="mutation rate per step size (e.g 1e-4)")
+                        help="mutation rate per step size (e.g 1e-4). \
+                        default is 10^-5")
     parser.add_argument('-i', '--inseq', help="input sequence", required=True)
     parser.add_argument('-v', '--verbose', action="store_true")
     args = parser.parse_args()
@@ -69,7 +70,7 @@ def main():
 x = "CATACATGACAGGCTGCTTGGCGAATTCTACGTCAGTACACACCAAGGCTCTGCGCCCGCTGTCGAAAGCGCCTATCGCTAATGTCTGCTGTGGCGCATT"
 x = 'ATG' + generate_seq(999) + 'TGA'
 print x
-print Counter(x) # test case with known example. should be a test case in the future
+print Counter(x) # test case to show proper nucleotide distribution with known example. should be a test case in the future
 
 print initialize_sim(100, 1000, sobj.K80, 10**-5, x) # second test case
 
